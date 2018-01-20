@@ -1,0 +1,13 @@
+fs = require('fs');
+Web3 = require('web3');
+web3 = new Web3( new Web3.providers.HttpProvider("http://localhost:8545/") );
+code = fs.readFileSync("realEstate.sol").toString();
+solc = require('solc');
+compiledCode = solc.compile( code );
+abi = JSON.parse( compiledCode.contracts[":realEstate"].interface );
+byteCode = compiledCode.contracts[':realEstate'].bytecode ;
+realEstateContract =  web3.eth.contract(abi) ;
+deployedContract = realEstateContract.new({data: byteCode , from: web3.eth.accounts[0] , gas: 3000000 });
+contractInstance = realEstateContract.at( deployedContract.address );
+console.log( "ABI : " + compiledCode.contracts[":realEstate"].interface + "\n" );
+console.log( "Deployed Contract Address : " + String( deployedContract.address ) + "\n" );
